@@ -1,0 +1,36 @@
+name: A-PONTE Compliance Standard
+
+on:
+  workflow_call:
+    inputs:
+      project_name:
+        required: true
+        type: string
+      environment:
+        required: false
+        type: string
+        default: "development"
+
+jobs:
+  security_scan:
+    name: 🛡️ Security Guardrails
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Secret Scanning (Gitleaks)
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: IaC Scanning (Trivy)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          exit-code: '1' # Quebra o build se achar vulnerabilidade crítica
+          severity: 'CRITICAL,HIGH'

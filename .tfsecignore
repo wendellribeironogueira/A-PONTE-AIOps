@@ -1,0 +1,6 @@
+.aponte-versions
+**/.aponte-versions
+venv
+.terraform
+.terragrunt-cache
+node_modules

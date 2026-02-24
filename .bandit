@@ -1,0 +1,2 @@
+[bandit]
+exclude_dirs = venv,.venv,env,.env,node_modules,.git,.terraform,__pycache__,tests,docs,build,dist

@@ -1,0 +1,38 @@
+# ==================================
+# Core Dependencies (Production)
+# ==================================
+# AWS SDK for Python
+boto3==1.35.36
+
+# Rich terminal UIs and formatting
+rich==13.9.2
+
+# Full-featured TUI framework for dashboards (ADR-023)
+textual==0.69.1
+
+# YAML parsing for configuration files
+PyYAML==6.0.2
+
+# HTTP requests for APIs (Ollama, GitHub, etc.)
+requests==2.32.3
+
+# CLI creation for Python scripts (ADR-014)
+typer[all]==0.12.3
+
+# ==================================
+# Development & Testing Dependencies
+# ==================================
+# Test runner
+pytest==8.2.2
+
+# Coverage reporting for pytest
+pytest-cov==5.0.0
+
+# Code coverage measurement
+coverage==7.5.3
+
+# Functional testing for Terraform
+tftest==1.8.1
+
+# Framework for managing pre-commit hooks
+pre-commit==3.7.1

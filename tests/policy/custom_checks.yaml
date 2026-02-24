@@ -1,0 +1,11 @@
+# Checkov Custom Policy (Attribute-based)
+metadata:
+  id: "CKV_CUSTOM_BOUNDARY"
+  name: "IAM Roles devem ter Permissions Boundary anexado"
+  category: "IAM"
+definition:
+  cond_type: "attribute"
+  resource_types:
+    - "aws_iam_role"
+  attribute: "permissions_boundary"
+  operator: "exists"

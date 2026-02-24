@@ -1,0 +1,49 @@
+name: A-PONTE Remote Apply
+
+on:
+  workflow_dispatch:
+    inputs:
+      project:
+        description: 'Nome do Projeto'
+        required: true
+        type: string
+
+permissions:
+  id-token: write   # Necessário para OIDC AWS
+  contents: read
+
+jobs:
+  apply:
+    name: Apply ${{ inputs.project }}
+    runs-on: ubuntu-latest
+    env:
+      AWS_REGION: sa-east-1
+      FORCE_NON_INTERACTIVE: "true"
+      # Sobrescreve a variável via ENV
+      TF_VAR_project_name: ${{ inputs.project }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Build CLI
+        run: |
+          go build -o bin/aponte cli/main.go
+          echo "$(pwd)/bin" >> $GITHUB_PATH
+
+      - name: Run Apply
+        run: |
+          TARGET_DIR="."
+          if [ -d "projects/${{ inputs.project }}" ]; then
+            TARGET_DIR="projects/${{ inputs.project }}"
+          fi
+          cd "$TARGET_DIR"
+
+          # Executa o apply usando a CLI
+          aponte deploy project

@@ -1,0 +1,20 @@
+quiet: true
+compact: true
+output: json
+skip-path:
+  - venv
+  - .venv
+  - env
+  - .env
+  - node_modules
+  - .git
+  - .terraform
+  - __pycache__
+skip-check:
+  - CKV_AWS_119 # DynamoDB: Ensure Tables are encrypted using a KMS Customer Managed CMK
+  - CKV_AWS_145 # S3: Ensure buckets are encrypted with KMS by default (vs SSE-S3)
+  - CKV_AWS_35 # CloudTrail: Ensure logs are encrypted at rest using KMS CMKs
+  - CKV_AWS_158 # CloudWatch: Ensure Log Group is encrypted by KMS
+  - CKV_AWS_173 # Lambda: Check encryption settings for Lambda environmental variable (Project uses AWS-managed keys)
+  - CKV_AWS_272 # Lambda: Ensure code-signing is enabled (Overhead for this internal function)
+  - CKV_AWS_337 # SSM: Ensure SSM parameters are using KMS CMK (Project uses AWS-managed keys)

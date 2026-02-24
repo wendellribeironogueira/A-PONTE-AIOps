@@ -1,0 +1,32 @@
+# =================================================================================
+# A-PONTE: Políticas de Segurança (Checkov)
+# =================================================================================
+# Substitui validações manuais OPA.
+# =================================================================================
+
+framework:
+  - terraform
+
+# Aponta para o diretório onde estão as políticas customizadas (.yaml ou .rego)
+external-checks-dir: tests/policy
+
+quiet: true
+soft-fail: false # Bloqueia o pipeline se encontrar erros
+
+# Lista de verificações a executar (Allowlist) ou Pular (Skip)
+check:
+  # 1. deny_open_security_groups (SSH/RDP/DB abertos)
+  - CKV_AWS_24 # Garante que nenhum security group permita entrada de 0.0.0.0:0 na porta 22
+  - CKV_AWS_23 # Garante que nenhum security group permita entrada de 0.0.0.0:0 na porta 3389
+
+  # 2. deny_unencrypted_s3
+  - CKV_AWS_19 # Garante que todos os dados armazenados no bucket S3 estejam criptografados
+
+  # 3. deny_iam_without_boundary (Custom Check via Graph)
+  # (Implementado via custom policies folder se necessário, aqui forçamos verificação de roles)
+
+  # 4. deny_iam_user_creation
+  - CKV_AWS_273 # Garante que nenhum usuário IAM seja criado
+
+  # 5. require_mandatory_tags
+  - CKV_AWS_51 # Garante que recursos AWS tenham tags

@@ -1,0 +1,69 @@
+FROM alpine:3.19
+
+# ARG para versão Go
+ARG GO_VERSION=1.22.0
+
+# 1. Instalação de Dependências Base e Python
+RUN apk add --no-cache \
+    bash \
+    coreutils \
+    curl \
+    libc6-compat \
+    jq \
+    git \
+    python3 \
+    py3-pip \
+    unzip
+
+# 2. Instalação de Ferramentas de IaC e Validadores
+ENV TERRAFORM_VERSION=1.8.2
+ENV TERRAGRUNT_VERSION=v0.55.0
+ENV GITLEAKS_VERSION=8.18.2
+ENV HADOLINT_VERSION=v2.12.0
+RUN set -ex && \
+    # Terraform
+    curl -sLO https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && \
+    unzip -o terraform_${TERRAFORM_VERSION}_linux_amd64.zip -d /usr/local/bin && \
+    # Terragrunt
+    curl -sL https://github.com/gruntwork-io/terragrunt/releases/download/${TERRAGRUNT_VERSION}/terragrunt_linux_amd64 -o /usr/local/bin/terragrunt && \
+    # Go
+    wget -q https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz && \
+    tar -C /usr/local -xzf go${GO_VERSION}.linux-amd64.tar.gz && \
+    # TFLint
+    curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash && \
+    printf 'plugin "aws" {\n enabled = true\n version = "0.28.0"\n source = "github.com/terraform-linters/tflint-ruleset-aws"\n}\n' > .tflint.hcl && \
+    tflint --init && \
+    rm .tflint.hcl && \
+    # TFSec
+    curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash && \
+    # Trivy
+    curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin && \
+    # Gitleaks
+    curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz | tar -xz -C /usr/local/bin gitleaks && \
+    # Hadolint
+    curl -sL https://github.com/hadolint/hadolint/releases/download/${HADOLINT_VERSION}/hadolint-Linux-x86_64 -o /usr/local/bin/hadolint && \
+    # Infracost
+    curl -fsSL https://raw.githubusercontent.com/infracost/infracost/master/scripts/install.sh | sh && \
+    # Limpeza
+    chmod +x /usr/local/bin/terragrunt /usr/local/bin/hadolint && \
+    rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip go${GO_VERSION}.linux-amd64.tar.gz
+
+# 3. Ajuste no PATH
+ENV PATH="/usr/local/go/bin:${PATH}"
+# Silencia avisos do Python (ex: RequestsDependencyWarning) que podem poluir o stdout/stderr
+ENV PYTHONWARNINGS="ignore"
+
+# Checkov, Prowler & Libs da IA Determinística (Python)
+# Instala boto3, rich, requests para que os scripts core/tools/*.py rodem aqui dentro
+# Prowler eh adicionado para auditoria AWS completa
+RUN pip3 install --break-system-packages checkov prowler bandit boto3 rich requests fastmcp beautifulsoup4 portalocker cookiecutter
+# 4. Configuração do Ambiente e Entrypoint
+COPY config/containers/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN mkdir -p /app && chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN ls -l /app
+
+WORKDIR /app
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Mantém o container rodando para receber comandos via 'docker exec'

@@ -1,0 +1,20 @@
+# Diretórios ignorados pela IA e Auditoria
+.git
+.terraform
+.terragrunt-cache
+.aponte-versions
+node_modules
+venv
+.venv
+env
+__pycache__
+dist
+build
+target
+output
+vendor
+bin
+obj
+.idea
+.vscode
+coverage

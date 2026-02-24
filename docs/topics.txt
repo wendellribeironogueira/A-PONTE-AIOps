@@ -1,0 +1,7 @@
+# Âncoras de Pesquisa (Researcher Agent)
+# O agente usará estes tópicos para descobrir novos conteúdos.
+
+devsecops
+iaops
+troubleshooting aws
+terraform

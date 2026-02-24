@@ -1,0 +1,19 @@
+# Gitleaks Config for A-PONTE
+# Ignora diretórios de infraestrutura, dependências e build para evitar falsos positivos e lentidão.
+
+[allowlist]
+description = "Ignored directories"
+paths = [
+  '''(^|/)venv/''',
+  '''(^|/)\.venv/''',
+  '''(^|/)env/''',
+  '''(^|/)\.env/''',
+  '''(^|/)node_modules/''',
+  '''(^|/)\.git/''',
+  '''(^|/)\.terraform/''',
+  '''(^|/)__pycache__/''',
+  '''(^|/)tests/''',
+  '''(^|/)docs/''',
+  '''(^|/)build/''',
+  '''(^|/)dist/''',
+]

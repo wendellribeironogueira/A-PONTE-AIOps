@@ -1,0 +1,38 @@
+repos:
+  # 1. Limpeza Básica
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  # 2. Segurança (Gitleaks) - Impede commit de senhas/chaves
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.1
+    hooks:
+      - id: gitleaks
+
+  # 3. Execução Local (Usa seus comandos Makefile/CLI existentes)
+  - repo: local
+    hooks:
+      - id: cli-build
+        name: 🔨 Build CLI (Go)
+        entry: make build
+        language: system
+        files: \.go$
+        pass_filenames: false
+
+      - id: terraform-fmt
+        name: 🏗️  Terraform Fmt
+        entry: terraform fmt
+        language: system
+        files: \.tf$
+        pass_filenames: true
+
+      - id: python-lint
+        name: 🐍 Python Syntax Check
+        entry: python3 -m py_compile
+        language: system
+        types: [python]

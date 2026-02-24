@@ -1,0 +1,101 @@
+name: Drift Detection
+
+on:
+  schedule:
+    - cron: '0 9 * * *' # 9h UTC diariamente
+  workflow_dispatch:
+
+jobs:
+  detect:
+    name: Detect Infrastructure Drift
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      issues: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Adicione aqui outros projetos críticos (ex: "ecommerce-prod")
+        project: ["a-ponte"]
+
+    env:
+      AWS_REGION: sa-east-1
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Build CLI
+        run: |
+          go build -o bin/aponte cli/main.go
+          echo "$(pwd)/bin" >> $GITHUB_PATH
+
+      - name: Initialize Sandbox
+        run: |
+          # Inicializa o estado dentro do container Docker antes de rodar o drift
+          export TF_VAR_project_name=${{ matrix.project }}
+
+          TARGET_DIR="."
+          if [ -d "projects/${{ matrix.project }}" ]; then
+            TARGET_DIR="projects/${{ matrix.project }}"
+          fi
+          cd "$TARGET_DIR"
+
+          aponte tf init
+
+      - name: Run Drift Detection (CLI)
+        id: drift
+        run: |
+          # A CLI retorna exit code 2 se houver drift, o que o bash captura aqui
+          set +e
+
+          TARGET_DIR="."
+          if [ -d "projects/${{ matrix.project }}" ]; then
+            TARGET_DIR="projects/${{ matrix.project }}"
+          fi
+          cd "$TARGET_DIR"
+
+          aponte drift detect ${{ matrix.project }}
+          exitcode=$?
+          set -e
+
+          echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+
+          if [ $exitcode -eq 2 ]; then
+            echo "⚠️ Drift Detectado (Exit Code 2)"
+            exit 0 # Não falha o step, deixa o próximo step tratar
+          elif [ $exitcode -ne 0 ]; then
+            echo "❌ Erro na execução (Exit Code $exitcode)"
+            exit $exitcode
+          fi
+        continue-on-error: true
+
+      - name: Check for Drift
+        if: steps.drift.outputs.exitcode == '2'
+        run: |
+          echo "::error::Drift Detected! Infrastructure is out of sync with Terraform configuration."
+          echo "DRIFT_DETECTED=true" >> $GITHUB_ENV
+
+      - name: Create Drift Issue
+        if: env.DRIFT_DETECTED == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = "🚨 Drift Detected [${{ matrix.project }}]: " + new Date().toISOString().split('T')[0];
+            const body = "Terraform detected changes in the infrastructure for project **${{ matrix.project }}**.\n\nPlease check the [Action Run](" + context.serverUrl + "/" + context.repo.owner + "/" + context.repo.repo + "/actions/runs/" + context.runId + ") for details.\n\n**Action Required:**\n1. Review the plan output.\n2. Import resources or revert manual changes.";
+
+            github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: title,
+              body: body,
+              labels: ['drift-detected', 'security']
+            });

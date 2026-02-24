@@ -1,0 +1,8 @@
+{
+  "project_name": "my-project",
+  "project_slug": "my-project",
+  "environment": "dev",
+  "app_name": "my-app",
+  "resource_name": "main-component",
+  "aws_region": "sa-east-1"
+}

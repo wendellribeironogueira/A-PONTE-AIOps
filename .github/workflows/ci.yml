@@ -1,0 +1,205 @@
+name: CI - Infrastructure Validation
+
+on:
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'infrastructure/**'
+      - 'projects/**'
+      - 'cli/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'go.mod'
+      - 'go.sum'
+      - 'requirements.txt'
+      - '.github/workflows/**'
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'infrastructure/**'
+      - 'projects/**'
+      - 'cli/**'
+      - 'scripts/**'
+      - 'tests/**'
+      - 'go.mod'
+      - 'go.sum'
+      - 'requirements.txt'
+      - '.github/workflows/**'
+
+jobs:
+  discover:
+    name: Discover Projects
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate Matrix
+        id: set-matrix
+        run: |
+          # Simplifica a descoberta de projetos usando find e jq para gerar um array JSON diretamente.
+          # Converte o path do diretório para o nome do projeto (ex: ./projects/web -> "web", . -> "a-ponte").
+          PROJECT_JSON=$(find . -name ".project.yml" -not -path "*/.*" -exec dirname {} \; | sed -e 's|^\./projects/||' -e 's|^\.|a-ponte|' | jq -R . | jq -s .)
+
+          # Safety Net: Impede falha silenciosa se nenhum projeto for encontrado
+          if [ "$PROJECT_JSON" = "[]" ] || [ -z "$PROJECT_JSON" ]; then
+            echo "::error::No projects found! Ensure .project.yml exists in root or projects/ directory."
+            exit 1
+          fi
+
+          echo "Found projects: $PROJECT_JSON"
+          echo "matrix={\"project\": $PROJECT_JSON}" >> $GITHUB_OUTPUT
+
+  test:
+    name: Code Quality & Governance
+    runs-on: ubuntu-22.04
+    permissions:
+      contents: read
+    # Fix: Define credenciais dummy para testes unitários que usam moto/boto3
+    env:
+      AWS_ACCESS_KEY_ID: testing
+      AWS_SECRET_ACCESS_KEY: testing
+      AWS_SECURITY_TOKEN: testing
+      AWS_SESSION_TOKEN: testing
+      AWS_DEFAULT_REGION: us-east-1
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.0'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+          terraform_wrapper: false
+
+      - name: Setup Terragrunt
+        run: |
+          wget -q -O terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.1/terragrunt_linux_amd64
+          chmod +x terragrunt
+          sudo mv terragrunt /usr/local/bin/
+          terragrunt --version
+
+      - name: Install Dependencies
+        run: |
+          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+
+      - name: Verify Go Modules (Pre-Clean)
+        # Valida a integridade do commit original antes de modificar o código
+        run: go mod verify
+
+      - name: Clean WIP Files
+        # Remove implementações parciais (Context) e legados (Dojo/Drift -> Python)
+        run: make clean-wip
+
+      - name: Check Formatting (Governance)
+        run: |
+          terraform fmt -check -recursive
+          find . -name "terragrunt.hcl" -exec terragrunt hclfmt --terragrunt-check {} +
+
+      - name: Run Unit Tests (Go)
+        run: |
+          # Não executa 'go mod tidy' para evitar alterar go.mod com base na implementação parcial
+          # Executa testes apenas no código estável
+          go test -v ./...
+
+      - name: Run Integration Tests (Python)
+        # Fix: Exclude functional tests that require real infra (matches Makefile)
+        run: python -m pytest tests/ --ignore=tests/functional -v
+
+  validate:
+    name: Validate & Security Check
+    needs: [discover, test]
+    runs-on: ubuntu-22.04
+    permissions:
+      id-token: write # Necessário para autenticação OIDC com AWS (Backend S3)
+      contents: read
+
+    strategy:
+      fail-fast: false # Se um projeto falhar, não cancela os testes dos outros
+      matrix: ${{ fromJson(needs.discover.outputs.matrix) }}
+
+    env:
+      AWS_REGION: ${{ secrets.AWS_REGION || 'sa-east-1' }} # Usa segredo do repositório com fallback
+      TF_VAR_project_name: ${{ matrix.project }} # Injeta o projeto da matriz dinamicamente
+      FORCE_NON_INTERACTIVE: "true" # Required by ADR-007 for CI execution
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.24.0'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+          terraform_wrapper: false
+
+      - name: Setup Terragrunt
+        # Necessário conforme ADR-003 para orquestração e backend
+        run: |
+          wget -q -O terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.55.1/terragrunt_linux_amd64
+          chmod +x terragrunt
+          sudo mv terragrunt /usr/local/bin/
+          terragrunt --version
+
+      - name: Install Dependencies
+        run: |
+          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Build CLI
+        run: |
+          # Uses Makefile to handle partial implementation (removes broken files before build)
+          make build
+          # Adiciona binário ao PATH para facilitar execução
+          echo "$(pwd)/bin" >> $GITHUB_PATH
+
+      - name: Smoke Test CLI
+        # Garante que o binário compilado é funcional e não quebra na inicialização
+        run: aponte --help
+
+      - name: Run Checks (Sandbox)
+        run: |
+          # Fail fast on any error, including in pipelines
+          set -eo pipefail
+          # Safety Net: Navega para o diretório do projeto para garantir contexto correto
+          # (Mitigação para remoção de context.go/Isolamento de Contexto na CLI)
+          TARGET_DIR="."
+          if [ -d "projects/${{ matrix.project }}" ]; then
+            TARGET_DIR="projects/${{ matrix.project }}"
+          fi
+          cd "$TARGET_DIR"
+
+          if ! aponte tf init; then
+            echo "::error::Terraform Init failed for project ${{ matrix.project }}"
+            exit 1
+          fi
+          aponte tf plan

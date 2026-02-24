@@ -1,0 +1,254 @@
+# Adicione URLs aqui (uma por linha) para a IA aprender em lote.
+# Linhas começando com # são ignoradas.
+
+# === AWS Security & IAM ===
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html
+https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html
+https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html
+
+# === Terraform & Best Practices ===
+https://developer.hashicorp.com/terraform/language/style
+https://developer.hashicorp.com/terraform/language/best-practices/naming
+https://developer.hashicorp.com/terraform/intro/glosario
+
+# === Containers & Kubernetes (EKS) ===
+https://docs.aws.amazon.com/eks/latest/userguide/best-practices-security.html
+https://kubernetes.io/docs/concepts/security/security-checklist/
+
+# === Observability & Logging ===
+https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Best_Practices.html
+https://docs.aws.amazon.com/aws-cloudtrail/latest/userguide/best-practices-security.html
+
+# === FinOps & Cost Optimization ===
+https://docs.aws.amazon.com/cost-management/latest/userguide/ce-what-is.html
+https://aws.amazon.com/aws-cost-management/aws-cost-optimization/
+# === Sugestões IA: java ===
+https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/welcome.html
+https://developer.hashicorp.com/vault/docs/platform/libraries/java
+https://opentelemetry.io/docs/languages/java/
+https://cheatsheetseries.owasp.org/cheatsheets/Java_Security_Cheatsheet.html
+
+# === Sugestões IA: AWS ===
+https://docs.aws.amazon.com/
+https://registry.terraform.io/providers/hashicorp/aws/latest/docs
+https://owasp.org/www-project-cloud-security-project/
+https://www.cncf.io/projects/
+
+# === Sugestões IA: TERRAFORM ===
+https://developer.hashicorp.com/terraform/aws
+https://developer.hashicorp.com/terraform/cli
+https://docs.aws.amazon.com/pt_br/terraform/
+https://developer.hashicorp.com/terraform/language/security
+https://developer.hashicorp.com/terraform/cloud
+
+# === Sugestões IA: CLOUD ===
+https://docs.aws.amazon.com/
+https://developer.hashicorp.com/
+https://www.cncf.io/
+https://owasp.org/www-project-cloud-security-project/
+https://docs.aws.amazon.com/whitepapers/latest/aws-overview/aws-global-infrastructure.html
+
+# === Sugestões IA: INFRACLOUD ===
+https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/infrastructure-as-code.html
+https://developer.hashicorp.com/docs/terraform/cloud-adoption-framework
+https://www.cncf.io/reports/cloud-native-security-whitepaper/
+https://owasp.org/www-project-serverless-top-10/
+https://docs.aws.amazon.com/wellarchitected/latest/framework/infrastructure-as-code.html
+
+# === Sugestões IA: devops ===
+https://docs.aws.amazon.com/devops/latest/userguide/welcome.html
+https://developer.hashicorp.com/devops
+https://www.cncf.io/devops/
+https://owasp.org/www-project-devsecops-guidance/
+https://docs.aws.amazon.com/whitepapers/latest/devops-aws/devops-aws.html
+
+# === Sugestões IA: devsecops ===
+https://docs.aws.amazon.com/devops-guru/latest/userguide/welcome.html
+https://developer.hashicorp.com/devsecops
+https://www.cncf.io/devsecops/
+https://owasp.org/www-project-devsecops-guidance/
+https://docs.aws.amazon.com/whitepapers/latest/security-devsecops-aws/security-devsecops-aws.html
+
+# [Auto-Discovery] S3 Data Protection
+https://aws.amazon.com/documentation/s3/
+
+# [Auto-Discovery] S3 Data Protection
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/DataProtection.html
+
+# [Auto-Discovery] Terraform Advanced Patterns
+https://developer.hashicorp.com/terraform/language/modules
+
+# [Auto-Discovery] FinOps AWS
+https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/welcome.html
+
+# [Auto-Discovery] Kubernetes Cost Optimization
+https://docs.aws.amazon.com/eks/latest/userguide/cost-optimization.html
+
+# [Auto-Discovery] Terraform Advanced Patterns
+https://developer.hashicorp.com/terraform/language/modules/composition
+
+# [Auto-Discovery] Terraform Advanced Patterns
+https://developer.hashicorp.com/terraform/language/modules/testing
+
+# [Auto-Discovery] Terraform Advanced Patterns
+https://aws.amazon.com/blogs/devops/implementing-advanced-terraform-patterns-for-aws-infrastructure/
+
+# [Auto-Discovery] Kubernetes Cost Optimization
+https://kubernetes.io/docs/concepts/configuration/resource-qos-and-scheduling/
+
+# [Auto-Discovery] Kubernetes Cost Optimization
+https://aws.amazon.com/blogs/containers/kubernetes-cost-optimization-best-practices-on-aws/
+
+# [Auto-Discovery] Kubernetes Cost Optimization
+https://developer.hashicorp.com/terraform/tutorials/kubernetes/eks-cost-optimization
+
+# [Auto-Discovery] Kubernetes Cost Optimization
+https://www.finops.org/framework/capabilities/kubernetes-cost-optimization/
+
+# [Auto-Discovery] Kubernetes Cost Optimization
+https://aws.github.io/aws-eks-best-practices/cost/
+
+# [Auto-Discovery] FinOps AWS
+https://docs.aws.amazon.com/wellarchitected/latest/cost-optimization-pillar/cost-optimization-pillar.html
+
+# [Auto-Discovery] FinOps AWS
+https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html
+
+# [Auto-Discovery] Terraform Advanced Patterns
+https://developer.hashicorp.com/terraform/enterprise/best-practices/advanced-patterns
+
+# [Auto-Discovery] Terraform Advanced Patterns
+https://developer.hashicorp.com/terraform/enterprise/best-practices/advanced-patterns/module-composition
+
+# [Auto-Discovery] Terraform Advanced Patterns
+https://developer.hashicorp.com/terraform/enterprise/best-practices/advanced-patterns/state-management
+
+# [Auto-Discovery] DevSecOps Pipelines
+https://aws.amazon.com/blogs/devops/implementing-a-devsecops-pipeline-with-aws-services/
+
+# [Auto-Discovery] DevSecOps Pipelines
+https://www.cncf.io/blog/2023/08/29/devsecops-best-practices-for-cloud-native-applications/
+
+# [Auto-Discovery] DevSecOps Pipelines
+https://www.hashicorp.com/blog/devsecops-best-practices-for-infrastructure-as-code
+
+# [Auto-Discovery] Platform Engineering
+https://tag-app-delivery.cncf.io/whitepapers/platform-engineering/
+
+# [Auto-Discovery] Platform Engineering
+https://developer.hashicorp.com/terraform/tutorials/platform-engineering/platform-engineering-introduction
+
+# [Auto-Discovery] Platform Engineering
+https://docs.aws.amazon.com/prescriptive-guidance/latest/internal-developer-platform/welcome.html
+
+# [Auto-Discovery] Platform Engineering
+https://tag-app-delivery.cncf.io/whitepapers/platforms/
+
+# [Auto-Discovery] Platform Engineering
+https://developer.hashicorp.com/platform-engineering
+
+# [Auto-Discovery] AIOps & LLM for DevOps
+https://tag-observability.cncf.io/whitepapers/ai-ml-in-observability/
+
+# [Auto-Discovery] AIOps & LLM for DevOps
+https://aws.amazon.com/blogs/architecture/generative-ai-for-devops-and-software-development/
+
+# [Auto-Discovery] AIOps & LLM for DevOps
+https://aws.amazon.com/blogs/devops/aiops-best-practices-for-proactive-operations-using-amazon-devops-guru/
+
+# [Auto-Discovery] S3 Data Protection
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/data-protection.html
+
+# [Auto-Discovery] S3 Data Protection
+https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/data-protection.html
+
+# [Auto-Discovery] S3 Data Protection
+https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-control-block-public-access.html
+
+# [Auto-Discovery] Terraform Advanced Patterns
+https://developer.hashicorp.com/terraform/language/modules/composition/patterns
+
+# [Auto-Discovery] Terraform Advanced Patterns
+https://aws.amazon.com/blogs/devops/implementing-a-multi-account-aws-environment-with-terraform-and-aws-control-tower/
+
+# [Auto-Discovery] FinOps AWS
+https://docs.aws.amazon.com/whitepapers/latest/aws-cloud-financial-management/aws-cloud-financial-management.html
+
+# [Auto-Discovery] AWS Security Best Practices
+https://docs.aws.amazon.com/security/latest/guides/security-best-practices.html
+
+# [Auto-Discovery] AWS Security Best Practices
+https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/security-pillar.html
+
+# [Auto-Discovery] AWS Security Best Practices
+https://docs.aws.amazon.com/whitepapers/latest/aws-security-incident-response-guide/aws-security-incident-response-guide.html
+
+# [Auto-Discovery] Platform Engineering
+https://aws.amazon.com/eks/
+
+# [Auto-Discovery] Platform Engineering
+https://cloudformation.com/
+
+# [Auto-Discovery] Platform Engineering
+https://www.cncf.org/
+
+# [Auto-Discovery] Kubernetes Cost Optimization
+https://aws.amazon.com/public/kubernetes-cost-optimization/
+
+# [Auto-Discovery] Kubernetes Cost Optimization
+https://doc.hasiCorp.com/2018/05/17/cost-pricing-in-aws/
+
+# [Auto-Discovery] Kubernetes Cost Optimization
+https://www.cnf-cf.com/docs/confluence/file/kubernetes-cost-optimization
+
+# [Auto-Discovery] S3 Data Protection
+https://aws.amazon.com/s3/access-control-management](https://aws.amazon.com/s3/access-control-management
+
+# [Auto-Discovery] S3 Data Protection
+https://hashicorp.github.io/aew-s3-gateway](https://hashicorp.github.io/aew-s3-gateway
+
+# [Auto-Discovery] S3 Data Protection
+https://s3wc.com/cnrf/s3-data-protection](https://s3wc.com/cnrf/s3-data-protection
+
+# [Auto-Discovery] DevSecOps Pipelines
+https://aws.amazon.com/devsec/](https://aws.amazon.com/devsec/
+
+# [Auto-Discovery] DevSecOps Pipelines
+https://hashicorp.com/ci-cd/deployment/](https://hashicorp.com/ci-cd/deployment/
+
+# [Auto-Discovery] DevSecOps Pipelines
+https://www.cncf.org/research/](https://www.cncf.org/research/
+
+# [Auto-Discovery] AWS Security Best Practices
+https://aws.amazon.com/Security.bestpractices/
+
+# [Auto-Discovery] AWS Security Best Practices
+https://aws.hasi.com/SecurityGuide/
+
+# [Auto-Discovery] AIOps & LLM for DevOps
+https://aws.amazon.com/kit/f
+
+# [Auto-Discovery] AIOps & LLM for DevOps
+https://cloudFormation.hasi.com/docs
+
+# [Auto-Discovery] AIOps & LLM for DevOps
+https://www.cncf.org/resources/
+
+# [Auto-Discovery] DevSecOps Pipelines
+https://www.hasiCorp.com
+
+# [Auto-Discovery] DevSecOps Pipelines
+https://www.cncf.com
+
+# [Discovery] Topic: devsecops
+https://html.duckduckgo.com/html/?q=devsecops+best+practices+aws+terraform
+
+# [Discovery] Topic: iaops
+https://html.duckduckgo.com/html/?q=iaops+best+practices+aws+terraform
+
+# [Discovery] Topic: troubleshooting aws
+https://html.duckduckgo.com/html/?q=troubleshooting+aws+best+practices+aws+terraform
+
+# [Discovery] Topic: terraform
+https://html.duckduckgo.com/html/?q=terraform+best+practices+aws+terraform

@@ -1,0 +1,55 @@
+# System & IDEs
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+.aponte/
+.infracost/
+.task/
+.trunk/
+.aponte_core.egg-info/
+.aponte-versions/
+.config/
+build/
+.pytest_cache/
+output/
+projects/
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Go
+bin/
+vendor/
+
+# Node.js
+node_modules/
+
+# Terraform & Terragrunt
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+.terragrunt-cache/
+
+# A-PONTE Platform (Local State & Secrets)
+.env
+.aponte-versions/
+logs/
+*.pid
+
+# Chat Memory (Session Logs)
+docs/knowledge_base/chat_sessions/
+
+# Project Local Cache (ADR-008 - DynamoDB is SSOT)
+projects/*.repos
+projects/*.project.yml
+projects/*.auto.tfvars

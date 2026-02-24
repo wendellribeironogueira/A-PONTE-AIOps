@@ -1,0 +1,14 @@
+format: json
+scanners:
+  - vuln
+  - secret
+  - misconfig
+skip-dirs:
+  - venv
+  - .venv
+  - env
+  - .env
+  - node_modules
+  - .git
+  - .terraform
+  - __pycache__

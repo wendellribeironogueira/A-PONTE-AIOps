@@ -1,0 +1,21 @@
+# Configuração TFSec para A-PONTE
+# Exclusões para performance e redução de falsos positivos
+
+exclude:
+  - venv
+  - .venv
+  - env
+  - .env
+  - node_modules
+  - .git
+  - .terraform
+  - __pycache__
+  - .aponte-versions
+  - docs
+  - build
+  - dist
+
+# Opcional: Ignorar regras específicas que não se aplicam ao projeto
+exclude-checks:
+  - AVD-AWS-0025 # DynamoDB: Table encryption does not use a customer-managed KMS key
+  - AVD-AWS-0132 # S3: Bucket does not encrypt data with a customer managed key

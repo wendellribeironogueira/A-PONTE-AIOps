@@ -1,0 +1,64 @@
+services:
+
+  # --- Sandbox de Execução (MCP) ---
+  mcp-terraform:
+    build:
+      context: ../..
+      dockerfile: config/containers/Dockerfile.mcp
+    container_name: mcp-terraform
+    working_dir: /app
+    env_file:
+      - ../../.env
+    volumes:
+      # Mapeia a raiz do projeto (incluindo a pasta .git) para o container
+      # Se APONTE_ROOT não estiver definido, usa ../../ (relativo a este arquivo)
+      - ${APONTE_ROOT:-../..}:/app:rw
+      - ~/.aws:/root/.aws:ro
+      # - ./test:/test
+      # Persistência de Cache de Segurança (Trivy DB, Prowler, etc) para performance
+      - security_cache:/root/.cache
+    environment:
+      - TF_IN_AUTOMATION=true
+      - AWS_PROFILE=${AWS_PROFILE:-default}
+      - AWS_REGION=${AWS_REGION:-sa-east-1}
+      # MIGRATION: Permite que scripts Python dentro do container acessem o Ollama no Host
+      - OLLAMA_URL=http://host.docker.internal:11434
+      # OTIMIZAÇÃO: Cache de Plugins Terraform (Evita download repetitivo)
+      - TF_PLUGIN_CACHE_DIR=/app/.aponte-versions/tf-plugin-cache
+      # Fix: Garante que scripts Python encontrem os módulos core mesmo sem passar pelo entrypoint.sh
+      - PYTHONPATH=/app
+      - INFRACOST_API_KEY=${INFRACOST_API_KEY}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - aponte-network
+    restart: unless-stopped
+    # Fix: Mantém o container vivo (Sleep) mas permite override de comando via 'docker compose run'
+    entrypoint: ["/bin/sh", "-c", "if [ $# -eq 0 ]; then exec tail -f /dev/null; else exec \"$@\"; fi", "--"]
+    deploy:
+      resources:
+        limits:
+          memory: 3G
+
+  # --- Memória de Longo Prazo (RAG) ---
+  vector-db:
+    image: chromadb/chroma:latest
+    container_name: aponte_vector_db
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+    networks:
+      - aponte-network
+
+volumes:
+  # ollama_data: # Removido pois o Ollama agora usa ~/.ollama do host
+  security_cache:
+  chroma_data:
+
+
+networks:
+  aponte-network:
+    driver: bridge

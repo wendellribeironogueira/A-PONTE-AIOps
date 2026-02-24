@@ -1,0 +1,216 @@
+# � Guia Rápido: Saindo dos Becos Sem Saída
+
+## � Problema Resolvido
+
+Agora o A-PONTE tem **3 novos comandos de emergência** para quando você ficar preso:
+
+```bash
+aponte break-glass enable   # Desbloqueia proteções
+aponte tf destroy           # Destroy (use com cautela)
+aponte break-glass disable  # Restaura segurança
+```
+
+
+## 📖 Casos de Uso Comuns
+
+### Cenário 1: "Não Consigo Destruir Meu Projeto de Teste"
+
+```bash
+# Antes (ERRO)
+$ aponte tf destroy
+❌ Error: Instance cannot be destroyed
+   Resource has lifecycle.prevent_destroy set
+
+# Agora (FUNCIONA)
+$ aponte break-glass enable
+🔓 Removendo proteções de destroy...
+✅ MODO EMERGÊNCIA ATIVADO!
+
+$ aponte tf destroy
+🔥 Destruindo infraestrutura...
+✅ Destroy concluído
+
+$ aponte break-glass disable
+🔒 Restaurando proteções...
+✅ Proteções restauradas!
+```
+
+---
+
+### Cenário 2: "Terraform Tá Bugado e Não Consigo Limpar"
+
+```bash
+# Quando tudo falha
+$ aponte force-destroy
+⚠️ Isso força a destruição ignorando erros. Continuar? [y/N]
+y
+
+💣 Iniciando destroy nuclear...
+🧹 Limpando recursos manualmente...
+🗑️ Removendo bucket: meu-projeto-tfstate
+�️ Removendo tabela: meu-projeto-tf-lock-table
+✅ Destroy nuclear concluído
+🔒 Proteções restauradas automaticamente
+```
+
+---
+
+### Cenário 3: "Contexto 'home' Bloqueou Tudo"
+
+```bash
+# Força mudança de contexto
+$ echo "meu-projeto-teste" > .bridge_context
+
+# Agora funciona
+$ aponte tf destroy
+```
+
+---
+
+### Cenário 4: "Preciso Destruir o A-PONTE (Core)"
+
+```bash
+# 1. Muda contexto
+$ echo "a-ponte" > .bridge_context
+
+# 2. Desbloqueia
+$ aponte break-glass enable
+
+# 3. Remove flag de proteção
+$ export TF_VAR_is_aponte="false"
+$ export TF_VAR_create_global_resources="false"
+
+# 4. Destroy
+$ aponte tf destroy
+
+# 5. Limpa backend manualmente
+$ aws s3 rb s3://a-ponte-tfstate-bucket --force
+$ aws dynamodb delete-table --table-name a-ponte-tf-lock-table
+
+# 6. Restaura proteções
+$ aponte break-glass disable
+```
+
+---
+
+## ️ Segurança dos Comandos de Emergência
+
+### `emergency-unlock`
+
+- ✅ Cria backup antes de modificar
+- ✅ Pode ser revertido com `emergency-restore`
+- ⚠️ **Não use em produção sem aprovação**
+
+### `force-destroy`
+
+- ✅ Chama `emergency-unlock` automaticamente
+- ✅ Restaura proteções automaticamente ao fim
+- ⚠️ **Ignora erros do Terraform - use como último recurso**
+
+### `emergency-restore`
+
+- ✅ Restaura do backup criado
+- ✅ Fallback para `git checkout` se backup falhar
+- ✅ Seguro de usar a qualquer momento
+
+---
+
+## � Workflow Recomendado
+
+### Para Ambientes de Desenvolvimento
+
+```bash
+# Trabalhe normalmente
+$ aponte deploy project
+$ aponte tf destroy
+
+# Se travar
+$ aponte break-glass enable
+$ aponte tf destroy
+$ aponte break-glass disable
+```
+
+### Para Ambientes de Produção
+
+```bash
+# NÃO USE emergency-unlock em prod
+
+# Se REALMENTE necessário (com aprovação):
+1. Abra um ticket de Change Request
+2. Obtenha aprovação de 2+ SREs
+3. Documente no arquivo de log
+4. Execute com auditoria:
+   $ aponte break-glass enable 2>&1 | tee emergency-$(date +%Y%m%d).log
+   $ aponte tf destroy
+   $ aponte break-glass disable
+5. Faça commit do log no repositório
+```
+
+---
+
+## � Troubleshooting
+
+### Erro: "sed: command not found"
+
+```bash
+# Windows/PowerShell
+$ choco install sed
+
+# Linux
+$ sudo apt install sed  # Debian/Ubuntu
+$ sudo yum install sed  # RHEL/CentOS
+
+# Mac
+$ brew install gnu-sed
+```
+
+### Erro: "backup not found"
+
+```bash
+# Se o backup falhar, use git diretamente
+$ git checkout terraform/storage.tf terraform/iam.tf
+```
+
+### Erro: "AWS CLI não encontrado"
+
+```bash
+# force-destroy precisa do AWS CLI
+$ aws --version  # Verifica instalação
+```
+
+---
+
+## � Documentação Completa
+
+Para informações detalhadas, consulte:
+
+- **Escape Hatches Completos**: `docs/ESCAPE_HATCHES.md`
+- **Balanceamento Segurança vs Operações**: `docs/BALANCE_SECURITY_VS_OPERATIONS.md`
+- **README Principal**: `README.md`
+- **Troubleshooting Geral**: `docs/TROUBLESHOOTING.md`
+
+---
+
+## ⚠️ Avisos Importantes
+
+1. **Sempre restaure as proteções** após resolver o problema
+2. **Nunca commite arquivos .backup** no git
+3. **Use `force-destroy` apenas como último recurso**
+4. **Em produção, documente todas as operações de emergência**
+5. **Se possível, use ambientes separados** (dev/staging/prod)
+
+---
+
+## 🆘 Ainda Preso?
+
+Se nenhuma dessas soluções funcionar:
+
+1. Leia `docs/ESCAPE_HATCHES.md` completo
+2. Verifique `aponte doctor` para dependências
+3. Abra uma issue no GitHub com:
+   - Output de `aponte doctor`
+   - Logs completos do erro
+   - Arquivo `.bridge_context`
+   - Saída de `terragrunt state list`
+
+**Boa sorte! 🚀**

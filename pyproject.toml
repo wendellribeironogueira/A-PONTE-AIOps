@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aponte-core"
+version = "2.0.0"
+description = "Cérebro da Plataforma A-PONTE (IA Ops & Automação)"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "Wendell Ribeiro Nogueira" }]
+dependencies = ["boto3", "docker", "rich>=13.0.0,<14.0.0", "requests", "textual", "moto", "fastmcp"]
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-cov", "tftest"]
+
+[tool.setuptools.packages.find]
+include = ["core*"]
