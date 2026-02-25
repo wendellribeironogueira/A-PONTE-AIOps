@@ -10,7 +10,7 @@
 
 > **A-PONTE** é uma plataforma de **AIOps (Artificial Intelligence for IT Operations)** que atua como um "Sistema Operacional" para a sua nuvem AWS. Ela unifica Governança, FinOps, Segurança e CI/CD em uma CLI impulsionada por uma squad de Agentes Autônomos — e foi construída para sobreviver no **Free Tier**.
 
-![Version](https://img.shields.io/badge/version-3.0.0-blue)
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-green)
 ![AWS](https://img.shields.io/badge/AWS-Free%20Tier%20Friendly-orange)
 ![Terraform](https://img.shields.io/badge/IaC-Terraform%20%7C%20Terragrunt-purple)
@@ -18,6 +18,7 @@
 ![AI](https://img.shields.io/badge/AI-Ollama%20%7C%20RAG%20%7C%20Agents-magenta)
 
 ---
+![menu  v2](https://github.com/user-attachments/assets/448567fe-b5ce-4d2f-80dd-422f4cf998c1)
 
 ## 🧭 Índice
 
