@@ -1,13 +1,5 @@
 # 🌉 A-PONTE: The AIOps Platform for AWS
 
-```text
-      / \
-     /   \      A-PONTE: Bridging the gap between
-    /_____\     Complex Infrastructure & Human Intent.
-   / \   / \
-  /   \ /   \
-```
-
 > **A-PONTE** é uma plataforma de **AIOps (Artificial Intelligence for IT Operations)** que atua como um "Sistema Operacional" para a sua nuvem AWS. Ela unifica Governança, FinOps, Segurança e CI/CD em uma CLI impulsionada por uma squad de Agentes Autônomos — e foi construída para sobreviver no **Free Tier**.
 
 ![Version](https://img.shields.io/badge/version-2.0.0-blue)
